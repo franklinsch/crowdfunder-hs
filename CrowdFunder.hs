@@ -20,19 +20,23 @@ initCrowdsale = Crowdsale {
   _funders = []
 }
 
-receiveMessage :: Message -> IO ()
-receiveMessage message = do
-  crowdsale <- readCrowdsale crowdsaleStateFilePath
-  let newCrowdsale = updateCrowdsale message crowdsale
-  writeCrowdsale crowdsaleStateFilePath newCrowdsale
-
 updateCrowdsale :: Message -> Crowdsale -> Crowdsale
 updateCrowdsale message c = c & funders.~newFunders & amountRaised.~newAmountRaised 
   where
     (funder, amount) = (sender &&& value) message
     newFunders = c^.funders ++ [Funder funder amount]
     newAmountRaised = c^.amountRaised + amount
-  
+
+-- API
+
+receiveMessage :: Message -> IO ()
+receiveMessage message = do
+  crowdsale <- readCrowdsale crowdsaleStateFilePath
+  let newCrowdsale = updateCrowdsale message crowdsale
+  writeCrowdsale crowdsaleStateFilePath newCrowdsale
+
+-- IO
+ 
 crowdsaleStateFilePath = "crowdsale.json"
 
 currentCrowdsale :: IO Crowdsale
@@ -42,9 +46,6 @@ readCrowdsale :: FilePath -> IO Crowdsale
 readCrowdsale f = do
   file <- S.readFile f
   return ((fromMaybe initCrowdsale . decode . pack) file)
-    where
-      g Nothing = initCrowdsale
-      g a = fromJust a
 
 writeCrowdsale :: FilePath -> Crowdsale -> IO ()
 writeCrowdsale f c = writeFile f (encode c)
