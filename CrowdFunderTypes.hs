@@ -6,6 +6,7 @@ module CrowdFunderTypes where
 import Data.Aeson
 import GHC.Generics
 import Control.Lens
+import Data.Time
 
 type Address = Integer
 type Amount = Integer
@@ -29,7 +30,7 @@ data Crowdsale = Crowdsale {
   _beneficiary :: Address,
   _fundingGoal :: Amount,
   _amountRaised :: Amount,
-  {-deadline :: DateTime,-}
+  _deadline :: UTCTime,
   _price :: Amount, -- Price of a token in Ether
   _tokenReward :: Token,
   _funders :: [Funder]

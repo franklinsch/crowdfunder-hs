@@ -8,6 +8,7 @@ import GHC.Generics
 import Data.ByteString.Lazy.Char8
 import System.IO hiding (hGetContents, writeFile)
 import qualified System.IO.Strict as S
+import Data.Time
 
 import CrowdFunderTypes
 
@@ -15,6 +16,7 @@ initCrowdsale = Crowdsale {
   _beneficiary = 0,
   _fundingGoal = 100,
   _amountRaised = 20,
+  _deadline = parseTimeOrError True defaultTimeLocale "%d %b %Y %l:%M %p" "26 Jan 2012 10:54 AM",
   _price = 15,
   _tokenReward = Token [],
   _funders = []
